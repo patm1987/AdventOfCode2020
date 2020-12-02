@@ -7,15 +7,23 @@ fn find_multiple_of_three(input: Vec<i32>, target: i32) -> Option<i32> {
         return None;
     } else {
         let mut a = 0;
-        let mut b = a + 1;
+        let mut b = 1;
         let mut c = input.len() - 1;
 
-        return if input[a] + input[b] + input[c] == target {
-            Some(input[a] * input[b] * input[c])
-        } else {
-            None
+        while b < c {
+            if input[a] + input[b] + input[c] == target {
+                return Some(input[a] * input[b] * input[c])
+            }
+
+            b += 1;
+
+            // early out if we've gone too far
+            if (target - (input[a] + input[c])) > input[b] {
+                break
+            }
         }
     }
+    None
 }
 
 #[cfg(test)]
@@ -43,5 +51,11 @@ mod tests {
     fn finds_some_if_middle_left_solution() {
         let values = vec![2, 3, 4, 5];
         assert_eq!(Some(30), find_multiple_of_three(values, 10))
+    }
+
+    #[test]
+    fn finds_some_if_middle_right_solution() {
+        let values = vec![2, 3, 4, 5];
+        assert_eq!(Some(40), find_multiple_of_three(values, 11))
     }
 }
