@@ -10,21 +10,26 @@ fn find_multiple_of_three(input: Vec<i32>, target: i32) -> Option<i32> {
         let mut b = 1;
         let mut c = input.len() - 1;
 
-        while c > b && input[a] + input[b] + input[c] > target {
-            c -= 1;
-        }
-
-        while b < c {
-            if input[a] + input[b] + input[c] == target {
-                return Some(input[a] * input[b] * input[c]);
+        while a < b && b < c {
+            while c > b && input[a] + input[b] + input[c] > target {
+                c -= 1;
             }
 
-            b += 1;
+            while b < c {
+                if input[a] + input[b] + input[c] == target {
+                    return Some(input[a] * input[b] * input[c]);
+                }
 
-            // early out if we've gone too far
-            if (target - (input[a] + input[c])) > input[b] {
-                break;
+                b += 1;
+
+                // early out if we've gone too far
+                if (target - (input[a] + input[c])) > input[b] {
+                    break;
+                }
             }
+
+            a += 1;
+            b = a + 1;
         }
     }
     None
@@ -67,5 +72,17 @@ mod tests {
     fn finds_some_if_right_must_shift() {
         let values = vec![2, 3, 4, 5];
         assert_eq!(Some(24), find_multiple_of_three(values, 9));
+    }
+
+    #[test]
+    fn finds_some_if_left_must_shift() {
+        let values = vec![2, 3, 4, 5];
+        assert_eq!(Some(60), find_multiple_of_three(values, 12))
+    }
+
+    #[test]
+    fn verify_works_in_middle() {
+        let values = vec![1, 3, 4, 5, 6];
+        assert_eq!(Some(60), find_multiple_of_three(values, 12))
     }
 }
