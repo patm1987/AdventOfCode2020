@@ -16,6 +16,7 @@ while a < b < c
     else a++, b = a+1
 
 wait no:
+```
 a = smallest
 b = a + 1
 c = largest
@@ -35,3 +36,4 @@ while a < b < c
         a ++
         b = a + 1
 return false
+```
