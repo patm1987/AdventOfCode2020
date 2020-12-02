@@ -1,3 +1,5 @@
+extern crate regex;
+
 fn main() {
     println!("Hello, world!");
 }
@@ -10,11 +12,13 @@ struct ParsedInput {
 }
 
 fn parse_line(line: &str) -> ParsedInput {
+    let r = regex::Regex::new(r"^(\d+)-(\d+) (\w): (\w+)$").expect("Malformed regex");
+    let cap = r.captures(line).unwrap();
     ParsedInput {
-        min: 0,
-        max: 0,
-        letter: '\0',
-        password: String::from(""),
+        min: cap[1].parse().unwrap(),
+        max: cap[2].parse().unwrap(),
+        letter: cap[3].chars().next().unwrap(),
+        password: String::from(&cap[4]),
     }
 }
 
