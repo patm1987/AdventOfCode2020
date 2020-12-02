@@ -1,5 +1,25 @@
+use std::{env, fs};
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify a filename to parse");
+    }
+    let filename = String::from(&args[1]);
+    println!("Parsing {}", filename);
+    let file = fs::read_to_string(filename).expect("Failed to parse input file");
+    let mut lines: Vec<i32> = file
+        .split("\n")
+        .filter_map(|x| {
+            let parsed = x.trim().parse::<i32>();
+            match parsed {
+                Ok(x) => Some(x),
+                Err(_) => None
+            }
+        })
+        .collect();
+    let result = find_multiple_of_three(&mut lines, 2020).expect("Failed to find match");
+    println!("The result is {}", result);
 }
 
 fn find_multiple_of_three(input: &mut Vec<i32>, target: i32) -> Option<i32> {
@@ -92,5 +112,11 @@ mod tests {
     fn verify_works_with_unsorted_data() {
         let mut values = vec![10, 3, 4, 2];
         assert_eq!(Some(24), find_multiple_of_three(&mut values, 9))
+    }
+
+    #[test]
+    fn example() {
+        let mut values = vec![1721, 979, 366, 299, 675, 1456];
+        assert_eq!(Some(241861950), find_multiple_of_three(&mut values, 2020))
     }
 }
