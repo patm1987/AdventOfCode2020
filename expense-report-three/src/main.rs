@@ -2,7 +2,9 @@ fn main() {
     println!("Hello, world!");
 }
 
-fn find_multiple_of_three(input: Vec<i32>, target: i32) -> Option<i32> {
+fn find_multiple_of_three(input: &mut Vec<i32>, target: i32) -> Option<i32> {
+    input.sort();
+
     if input.len() < 3 {
         return None;
     } else {
@@ -41,48 +43,54 @@ mod tests {
 
     #[test]
     fn none_for_empty() {
-        assert_eq!(None, find_multiple_of_three(Vec::new(), 1))
+        assert_eq!(None, find_multiple_of_three(&mut Vec::new(), 1))
     }
 
     #[test]
     fn multiplies_three() {
-        let values = vec![2, 3, 4];
-        assert_eq!(Some(24), find_multiple_of_three(values, 9))
+        let mut values = vec![2, 3, 4];
+        assert_eq!(Some(24), find_multiple_of_three(&mut values, 9))
     }
 
     #[test]
     fn finds_none_if_sum_isnt_target() {
-        let values = vec![2, 3, 4];
-        assert_eq!(None, find_multiple_of_three(values, 10))
+        let mut values = vec![2, 3, 4];
+        assert_eq!(None, find_multiple_of_three(&mut values, 10))
     }
 
     #[test]
     fn finds_some_if_middle_left_solution() {
-        let values = vec![2, 3, 4, 5];
-        assert_eq!(Some(30), find_multiple_of_three(values, 10))
+        let mut values = vec![2, 3, 4, 5];
+        assert_eq!(Some(30), find_multiple_of_three(&mut values, 10))
     }
 
     #[test]
     fn finds_some_if_middle_right_solution() {
-        let values = vec![2, 3, 4, 5];
-        assert_eq!(Some(40), find_multiple_of_three(values, 11))
+        let mut values = vec![2, 3, 4, 5];
+        assert_eq!(Some(40), find_multiple_of_three(&mut values, 11))
     }
 
     #[test]
     fn finds_some_if_right_must_shift() {
-        let values = vec![2, 3, 4, 5];
-        assert_eq!(Some(24), find_multiple_of_three(values, 9));
+        let mut values = vec![2, 3, 4, 5];
+        assert_eq!(Some(24), find_multiple_of_three(&mut values, 9));
     }
 
     #[test]
     fn finds_some_if_left_must_shift() {
-        let values = vec![2, 3, 4, 5];
-        assert_eq!(Some(60), find_multiple_of_three(values, 12))
+        let mut values = vec![2, 3, 4, 5];
+        assert_eq!(Some(60), find_multiple_of_three(&mut values, 12))
     }
 
     #[test]
     fn verify_works_in_middle() {
-        let values = vec![1, 3, 4, 5, 6];
-        assert_eq!(Some(60), find_multiple_of_three(values, 12))
+        let mut values = vec![1, 3, 4, 5, 6];
+        assert_eq!(Some(60), find_multiple_of_three(&mut values, 12))
+    }
+
+    #[test]
+    fn verify_works_with_unsorted_data() {
+        let mut values = vec![10, 3, 4, 2];
+        assert_eq!(Some(24), find_multiple_of_three(&mut values, 9))
     }
 }
