@@ -21,7 +21,9 @@ impl ReportTracker {
                 }
             }
             None => {
+                if value < self.target_sum {
                 self.looking_for = Some(self.target_sum - value);
+                }
                 return (false, 0);
             }
         }
@@ -43,6 +45,14 @@ mod tests {
     #[test]
     fn test_finds_match() {
         let mut report = build_report_tracker(3);
+        assert_eq!((false, 0), report.add_expense(1));
+        assert_eq!((true, 2), report.add_expense(2));
+    }
+
+    #[test]
+    fn test_finds_match_if_first_large() {
+        let mut report = build_report_tracker(3);
+        assert_eq!((false, 0), report.add_expense(5));
         assert_eq!((false, 0), report.add_expense(1));
         assert_eq!((true, 2), report.add_expense(2));
     }
