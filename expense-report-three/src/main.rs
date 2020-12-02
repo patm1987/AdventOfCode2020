@@ -3,7 +3,19 @@ fn main() {
 }
 
 fn find_multiple_of_three(input: Vec<i32>, target: i32) -> Option<i32> {
-    if input.len() < 3 { None } else if (input[0] + input[1] + input[2] == target) { Some(input[0] * input[1] * input[2]) } else { None }
+    if input.len() < 3 {
+        return None;
+    } else {
+        let mut a = 0;
+        let mut b = a + 1;
+        let mut c = input.len() - 1;
+
+        return if input[a] + input[b] + input[c] == target {
+            Some(input[a] * input[b] * input[c])
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(test)]
@@ -25,5 +37,11 @@ mod tests {
     fn finds_none_if_sum_isnt_target() {
         let values = vec![2, 3, 4];
         assert_eq!(None, find_multiple_of_three(values, 10))
+    }
+
+    #[test]
+    fn finds_some_if_middle_left_solution() {
+        let values = vec![2, 3, 4, 5];
+        assert_eq!(Some(30), find_multiple_of_three(values, 10))
     }
 }
