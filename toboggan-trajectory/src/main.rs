@@ -13,11 +13,13 @@ fn main() {
     let file: &str = &args[1];
     let input_map = build_map(&fs::read_to_string(file).expect("Failed to read input"));
     let count = trees_hit(3, 1, &input_map);
+    let product = trees_hit_mul(&[(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)], &input_map);
 
     println!("hit {} trees", count);
+    println!("mul: {}", product);
 }
 
-fn trees_hit(dx: i32, dy: i32, map: &Map) -> i32 {
+fn trees_hit(dx: i32, dy: i32, map: &Map) -> i64 {
     let mut x = 0;
     let mut y = 0;
     let mut count = 0;
@@ -32,8 +34,8 @@ fn trees_hit(dx: i32, dy: i32, map: &Map) -> i32 {
     count
 }
 
-fn trees_hit_mul(deltas: &[(i32, i32)], map: &Map) -> i32 {
-    0
+fn trees_hit_mul(deltas: &[(i32, i32)], map: &Map) -> i64 {
+    deltas.iter().map(|(dx,dy)| trees_hit(*dx, *dy, map)).product()
 }
 
 #[cfg(test)]
