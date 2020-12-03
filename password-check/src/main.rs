@@ -34,7 +34,17 @@ fn validate_line(line: &str) -> bool {
             sum += 1;
         }
     }
-    return sum >= parsed.min
+    return sum >= parsed.min && sum <= parsed.max;
+}
+
+fn count_valid_lines(input: &str) -> i32 {
+    let mut count = 0;
+    for line in input.split('\n') {
+        if validate_line(line) {
+            count += 1;
+        }
+    }
+    count
 }
 
 #[cfg(test)]
@@ -83,5 +93,19 @@ mod tests {
     fn test_validates_min_occurance() {
         let input = "1-3 a: abcd";
         assert!(validate_line(input));
+    }
+
+    #[test]
+    fn test_validates_max_occurance() {
+        let input = "1-3 a: aaaa";
+        assert!(!validate_line(input));
+    }
+
+    #[test]
+    fn test_validates_example_input() {
+        let input = "1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc";
+        assert_eq!(2, count_valid_lines(input));
     }
 }
