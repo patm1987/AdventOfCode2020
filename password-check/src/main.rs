@@ -26,6 +26,17 @@ fn parse_line(line: &str) -> Result<ParsedInput, &'static str> {
     }
 }
 
+fn validate_line(line: &str) -> bool {
+    let parsed = parse_line(line).expect("Failed to parse input");
+    let mut sum = 0;
+    for i in parsed.password.chars() {
+        if i == parsed.letter {
+            sum += 1;
+        }
+    }
+    return sum >= parsed.min
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -66,5 +77,11 @@ mod tests {
             Ok(_) => assert!(false),
             Err(_) => assert!(true)
         }
+    }
+
+    #[test]
+    fn test_validates_min_occurance() {
+        let input = "1-3 a: abcd";
+        assert!(validate_line(input));
     }
 }
