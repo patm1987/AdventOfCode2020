@@ -20,6 +20,9 @@ impl Map {
     pub fn get(&self, x: i32, y: i32) -> char {
         return self.map[(x % self.width + y * self.width) as usize];
     }
+
+    pub fn width(&self) -> i32 { self.width }
+    pub fn height(&self) -> i32 { self.height }
 }
 
 #[cfg(test)]
@@ -68,5 +71,19 @@ mod tests {
         let input = "..\n.#";
         let map = build_map(input);
         assert_eq!('#', map.get(3, 1))
+    }
+
+    #[test]
+    fn test_get_width() {
+        let input = "..";
+        let map = build_map(input);
+        assert_eq!(2, map.width());
+    }
+
+    #[test]
+    fn test_get_height() {
+        let input = "..\n..\n..";
+        let map = build_map(input);
+        assert_eq!(3, map.height());
     }
 }
