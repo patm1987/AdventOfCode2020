@@ -1,7 +1,17 @@
 extern crate regex;
 
+use std::{env, fs};
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Specify the file to open!");
+        return;
+    }
+    let filename = &args[1];
+    let input = fs::read_to_string(filename).expect("Failed to open file");
+    let count = count_valid_lines(&input.as_str());
+    println!("There are {} valid lines", count);
 }
 
 struct ParsedInput {
@@ -27,14 +37,18 @@ fn parse_line(line: &str) -> Result<ParsedInput, &'static str> {
 }
 
 fn validate_line(line: &str) -> bool {
-    let parsed = parse_line(line).expect("Failed to parse input");
-    let mut sum = 0;
-    for i in parsed.password.chars() {
-        if i == parsed.letter {
-            sum += 1;
-        }
+    match parse_line(line) {
+        Ok(parsed) => {
+            let mut sum = 0;
+            for i in parsed.password.chars() {
+                if i == parsed.letter {
+                    sum += 1;
+                }
+            }
+            return sum >= parsed.min && sum <= parsed.max;
+        },
+        Err(_) => false
     }
-    return sum >= parsed.min && sum <= parsed.max;
 }
 
 fn count_valid_lines(input: &str) -> i32 {
@@ -107,5 +121,11 @@ mod tests {
 1-3 b: cdefg
 2-9 c: ccccccccc";
         assert_eq!(2, count_valid_lines(input));
+    }
+
+    #[test]
+    fn test_validates_empty_line() {
+        let input = "";
+        assert!(!validate_line(input));
     }
 }
