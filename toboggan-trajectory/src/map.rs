@@ -12,7 +12,7 @@ pub fn build_map(input: &str) -> Map {
     Map {
         width,
         height,
-        map: lines.iter().fold(String::new(), |acc, x| acc + x).chars().collect()
+        map: lines.iter().fold(String::new(), |acc, x| acc + x).chars().collect(),
     }
 }
 
@@ -42,5 +42,11 @@ mod tests {
         let input = ".#";
 
         assert_eq!(Map { width: 2, height: 1, map: vec!['.', '#'] }, build_map(input))
+    }
+
+    #[test]
+    fn test_builds_two_rows() {
+        let input = ".#\n..";
+        assert_eq!(Map { width: 2, height: 2, map: vec!['.', '#', '.', '.'] }, build_map(input))
     }
 }
