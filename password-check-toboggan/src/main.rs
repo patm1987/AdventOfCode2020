@@ -34,6 +34,16 @@ fn validate_line(line: &str) -> bool {
     }
 }
 
+fn count_valid_lines(input: &str) -> i32 {
+    let mut count = 0;
+    for line in input.split('\n') {
+        if validate_line(line) {
+            count += 1;
+        }
+    }
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -98,5 +108,14 @@ mod tests {
     fn handles_both_indices() {
         let input = "1-3 a: aba";
         assert!(!validate_line(input))
+    }
+
+    #[test]
+    fn handles_sample_input() {
+        let input = "1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc
+";
+        assert_eq!(1, count_valid_lines(input));
     }
 }
