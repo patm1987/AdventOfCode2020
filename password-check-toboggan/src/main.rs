@@ -1,5 +1,16 @@
+use std::{env, fs};
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify the program input!");
+        return;
+    }
+
+    let input = fs::read_to_string(&args[1]).expect("Failed to read input");
+    let count = count_valid_lines(&input.as_str());
+
+    println!("There are {} valid passwords", count);
 }
 
 struct ParsedInput {
