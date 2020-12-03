@@ -18,7 +18,7 @@ pub fn build_map(input: &str) -> Map {
 
 impl Map {
     pub fn get(&self, x: i32, y: i32) -> char {
-        return self.map[(x + y * self.width) as usize];
+        return self.map[(x % self.width + y * self.width) as usize];
     }
 }
 
@@ -61,5 +61,12 @@ mod tests {
         let input = "..\n.#";
         let map = build_map(input);
         assert_eq!('#', map.get(1, 1))
+    }
+
+    #[test]
+    fn test_index_with_wrap() {
+        let input = "..\n.#";
+        let map = build_map(input);
+        assert_eq!('#', map.get(3, 1))
     }
 }
