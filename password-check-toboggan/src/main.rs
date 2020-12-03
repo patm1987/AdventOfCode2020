@@ -24,6 +24,13 @@ fn parse_line(line: &str) -> Result<ParsedInput, &'static str> {
     }
 }
 
+fn validate_line(line: &str) -> bool {
+    match parse_line(line) {
+        Ok(parsed) => parsed.password.chars().collect::<Vec<char>>()[(parsed.min - 1) as usize] == parsed.letter,
+        Err(_) => false
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -64,5 +71,17 @@ mod tests {
             Ok(_) => assert!(false),
             Err(_) => assert!(true)
         }
+    }
+
+    #[test]
+    fn handles_empty_input() {
+        let input = "";
+        assert!(!validate_line(input))
+    }
+
+    #[test]
+    fn handles_first_index() {
+        let input = "1-3 a: abc";
+        assert!(validate_line(input));
     }
 }
