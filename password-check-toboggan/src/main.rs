@@ -26,7 +26,10 @@ fn parse_line(line: &str) -> Result<ParsedInput, &'static str> {
 
 fn validate_line(line: &str) -> bool {
     match parse_line(line) {
-        Ok(parsed) => parsed.password.chars().collect::<Vec<char>>()[(parsed.index0 - 1) as usize] == parsed.letter,
+        Ok(parsed) => {
+            let chars = parsed.password.chars().collect::<Vec<char>>();
+            return chars[(parsed.index0 - 1) as usize] == parsed.letter || chars[(parsed.index1 - 1) as usize] == parsed.letter;
+        }
         Err(_) => false
     }
 }
@@ -82,6 +85,12 @@ mod tests {
     #[test]
     fn handles_first_index() {
         let input = "1-3 a: abc";
+        assert!(validate_line(input));
+    }
+
+    #[test]
+    fn handles_second_index() {
+        let input = "1-3 a: cba";
         assert!(validate_line(input));
     }
 }
