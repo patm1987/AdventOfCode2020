@@ -3,8 +3,8 @@ fn main() {
 }
 
 struct ParsedInput {
-    min: i32,
-    max: i32,
+    index0: i32,
+    index1: i32,
     letter: char,
     password: String,
 }
@@ -14,8 +14,8 @@ fn parse_line(line: &str) -> Result<ParsedInput, &'static str> {
     match r.captures(line) {
         Some(cap) => {
             Ok(ParsedInput {
-                min: cap[1].parse().unwrap(),
-                max: cap[2].parse().unwrap(),
+                index0: cap[1].parse().unwrap(),
+                index1: cap[2].parse().unwrap(),
                 letter: cap[3].chars().next().unwrap(),
                 password: String::from(&cap[4]),
             })
@@ -26,7 +26,7 @@ fn parse_line(line: &str) -> Result<ParsedInput, &'static str> {
 
 fn validate_line(line: &str) -> bool {
     match parse_line(line) {
-        Ok(parsed) => parsed.password.chars().collect::<Vec<char>>()[(parsed.min - 1) as usize] == parsed.letter,
+        Ok(parsed) => parsed.password.chars().collect::<Vec<char>>()[(parsed.index0 - 1) as usize] == parsed.letter,
         Err(_) => false
     }
 }
@@ -39,14 +39,14 @@ mod tests {
     fn test_tokenizes_min() {
         let input = "1-3 a: abcde";
         let parsed = parse_line(input).expect("Failed to parse");
-        assert_eq!(1, parsed.min);
+        assert_eq!(1, parsed.index0);
     }
 
     #[test]
     fn test_tokenizes_max() {
         let input = "1-3 a: abcde";
         let parsed = parse_line(input).expect("Failed to parse");
-        assert_eq!(3, parsed.max);
+        assert_eq!(3, parsed.index1);
     }
 
     #[test]
