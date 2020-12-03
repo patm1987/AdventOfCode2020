@@ -6,7 +6,7 @@ pub struct Map {
 }
 
 pub fn build_map(input: &str) -> Map {
-    let lines: Vec<&str> = input.split('\n').collect();
+    let lines: Vec<&str> = input.trim().split('\n').collect();
     let width = lines[0].len() as i32;
     let height = lines.len() as i32;
     Map {
@@ -85,5 +85,12 @@ mod tests {
         let input = "..\n..\n..";
         let map = build_map(input);
         assert_eq!(3, map.height());
+    }
+
+    #[test]
+    fn test_handles_empty_row() {
+        let input = "..\n..\n";
+        let map = build_map(input);
+        assert_eq!(2, map.height());
     }
 }
