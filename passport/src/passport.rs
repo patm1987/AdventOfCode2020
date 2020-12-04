@@ -31,6 +31,9 @@ impl Passport {
                 "iyr" => passport.issue_year = Some(value.to_string()),
                 "eyr" => passport.expiration_year = Some(value.to_string()),
                 "hgt" => passport.height = Some(value.to_string()),
+                "hcl" => passport.hair_color = Some(value.to_string()),
+                "ecl" => passport.eye_color = Some(value.to_string()),
+                "pid" => passport.passport_id = Some(value.to_string()),
                 _ => {}
             }
         });
@@ -66,5 +69,23 @@ mod tests {
     fn validate_height() {
         let passport = Passport::build(VALID_ENTRY);
         assert_eq!("183cm", passport.height.unwrap());
+    }
+
+    #[test]
+    fn validate_hair_color() {
+        let passport = Passport::build(VALID_ENTRY);
+        assert_eq!("#fffffd", passport.hair_color.unwrap());
+    }
+
+    #[test]
+    fn validate_eye_color() {
+        let passport = Passport::build(VALID_ENTRY);
+        assert_eq!("gry", passport.eye_color.unwrap());
+    }
+
+    #[test]
+    fn validate_passport_id() {
+        let passport = Passport::build(VALID_ENTRY);
+        assert_eq!("860033327", passport.passport_id.unwrap());
     }
 }
