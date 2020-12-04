@@ -1,9 +1,18 @@
 use crate::passport::Passport;
+use std::{env, fs};
 
 mod passport;
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify an input file");
+        return;
+    }
+
+    let filename: &str = &args[1];
+    let input = fs::read_to_string(filename);
+    println!("There are {} valid passports", count_valid_passports(&input.unwrap()))
 }
 
 fn split_input(input: &str) -> Vec<&str> {
