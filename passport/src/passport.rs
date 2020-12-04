@@ -1,3 +1,5 @@
+use regex::Regex;
+
 #[derive(Debug)]
 pub struct Passport {
     birth_year: Option<i32>,
@@ -58,7 +60,12 @@ impl Passport {
                         None => {}
                     }
                 }
-                "hgt" => passport.height = Some(value.to_string()),
+                "hgt" => {
+                    let re = Regex::new(r"^\d+(cm|in)").unwrap();
+                    if re.is_match(value) {
+                        passport.height = Some(value.to_string())
+                    }
+                }
                 "hcl" => passport.hair_color = Some(value.to_string()),
                 "ecl" => passport.eye_color = Some(value.to_string()),
                 "pid" => passport.passport_id = Some(value.to_string()),
@@ -93,6 +100,46 @@ mod tests {
     use super::*;
 
     const VALID_ENTRY: &'static str = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm";
+
+    struct PassportStringBuilder<'a> {
+        birth_year: &'a str,
+        issue_year: &'a str,
+        expiration_year: &'a str,
+        height: &'a str,
+        hair_color: &'a str,
+        eye_color: &'a str,
+        passport_id: &'a str,
+        country_id: &'a str,
+    }
+
+    impl PassportStringBuilder<'_> {
+        fn new<'a>() -> PassportStringBuilder<'a> {
+            PassportStringBuilder {
+                birth_year: "1920",
+                issue_year: "2010",
+                expiration_year: "2020",
+                height: "150cm",
+                hair_color: "#123456",
+                eye_color: "amb",
+                passport_id: "123456789",
+                country_id: "any",
+            }
+        }
+    }
+
+    impl ToString for PassportStringBuilder<'_> {
+        fn to_string(&self) -> String {
+            format!("byr:{} iyr:{} eyr:{} hgt:{} hcl:{} ecl:{} pid:{} cid:{}",
+                    self.birth_year,
+                    self.issue_year,
+                    self.expiration_year,
+                    self.height,
+                    self.hair_color,
+                    self.eye_color,
+                    self.passport_id,
+                    self.country_id)
+        }
+    }
 
     #[test]
     fn validate_birth_year() {
@@ -144,19 +191,19 @@ mod tests {
 
     #[test]
     fn requires_birth_year() {
-        let passport = Passport::build("iyr:2020 eyr:2020 hgt:a hcl:a ecl:a pid:a cid:a");
+        let passport = Passport::build("iyr:2020 eyr:2020 hgt:150cm hcl:a ecl:a pid:a cid:a");
         assert!(!passport.is_valid())
     }
 
     #[test]
     fn requires_issue_year() {
-        let passport = Passport::build("byr:1920 eyr:2020 hgt:a hcl:a ecl:a pid:a cid:a");
+        let passport = Passport::build("byr:1920 eyr:2020 hgt:150cm hcl:a ecl:a pid:a cid:a");
         assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_expiration_year() {
-        let passport = Passport::build("byr:1920 iyr:2020 hgt:a hcl:a ecl:a pid:a cid:a");
+        let passport = Passport::build("byr:1920 iyr:2020 hgt:150cm hcl:a ecl:a pid:a cid:a");
         assert!(!passport.is_valid());
     }
 
@@ -168,31 +215,31 @@ mod tests {
 
     #[test]
     fn requires_hair_color() {
-        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:a ecl:a pid:a cid:a");
+        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:150cm ecl:a pid:a cid:a");
         assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_eye_color() {
-        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:a hcl:a pid:a cid:a");
+        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:150cm hcl:a pid:a cid:a");
         assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_passport_id() {
-        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:a hcl:a ecl:a cid:a");
+        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:150cm hcl:a ecl:a cid:a");
         assert!(!passport.is_valid());
     }
 
     #[test]
     fn doesnt_need_country_id() {
-        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:a hcl:a ecl:a pid:a");
+        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:150cm hcl:a ecl:a pid:a");
         assert!(passport.is_valid());
     }
 
     #[test]
     fn valid_whole_passport() {
-        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:a hcl:a ecl:a pid:a cid:a");
+        let passport = Passport::build("byr:1920 iyr:2020 eyr:2020 hgt:150cm hcl:a ecl:a pid:a cid:a");
         assert!(passport.is_valid());
     }
 
@@ -284,5 +331,45 @@ mod tests {
         let passport2 = Passport::build("eyr:2031 iyr:2020 byr:1920 hcl:dab227 ecl:brn hgt:182cm pid:021572410 cid:277");
         assert!(passport1.is_valid());
         assert!(!passport2.is_valid());
+    }
+
+    #[test]
+    fn require_height_is_number_plus_units() {
+        let mut passport_builder = PassportStringBuilder::new();
+
+        passport_builder.height = "192";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
+
+        passport_builder.height = "acm";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
+
+        passport_builder.height = "ain";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
+
+        passport_builder.height = "192cm";
+        assert!(Passport::build(&passport_builder.to_string()).is_valid());
+
+        passport_builder.height = "59in";
+        assert!(Passport::build(&passport_builder.to_string()).is_valid());
+    }
+
+    #[test]
+    fn require_height_is_at_least_150cm() {
+        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+    }
+
+    #[test]
+    fn require_height_is_at_most_193cm() {
+        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+    }
+
+    #[test]
+    fn require_height_is_at_least_59in() {
+        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+    }
+
+    #[test]
+    fn require_height_is_at_most_76in() {
+        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
     }
 }
