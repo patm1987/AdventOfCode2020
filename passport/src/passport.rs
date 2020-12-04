@@ -6,7 +6,7 @@ struct Passport {
     hair_color: Option<String>,
     eye_color: Option<String>,
     passport_id: Option<String>,
-    country_id: Option<String>
+    country_id: Option<String>,
 }
 
 impl Passport {
@@ -19,7 +19,7 @@ impl Passport {
             hair_color: None,
             eye_color: None,
             passport_id: None,
-            country_id: None
+            country_id: None,
         };
         let tokens = input.split_ascii_whitespace();
         tokens.for_each(|token| {
