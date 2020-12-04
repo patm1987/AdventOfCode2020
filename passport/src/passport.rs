@@ -34,6 +34,7 @@ impl Passport {
                 "hcl" => passport.hair_color = Some(value.to_string()),
                 "ecl" => passport.eye_color = Some(value.to_string()),
                 "pid" => passport.passport_id = Some(value.to_string()),
+                "cid" => passport.country_id = Some(value.to_string()),
                 _ => {}
             }
         });
@@ -87,5 +88,11 @@ mod tests {
     fn validate_passport_id() {
         let passport = Passport::build(VALID_ENTRY);
         assert_eq!("860033327", passport.passport_id.unwrap());
+    }
+
+    #[test]
+    fn validate_country_id() {
+        let passport = Passport::build(VALID_ENTRY);
+        assert_eq!("147", passport.country_id.unwrap());
     }
 }
