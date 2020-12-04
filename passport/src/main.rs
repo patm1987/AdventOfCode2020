@@ -12,9 +12,7 @@ fn split_input(input: &str) -> Vec<&str> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn verify_splits_entries() {
-        let input = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+    const SAMPLE_INPUT: &'static str = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 byr:1937 iyr:2017 cid:147 hgt:183cm
 
 iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
@@ -28,6 +26,8 @@ hgt:179cm
 hcl:#cfa07d eyr:2025 pid:166559648
 iyr:2011 ecl:brn hgt:59in";
 
+    #[test]
+    fn verify_splits_entries() {
         let expected = vec![
             "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm",
             "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884\nhcl:#cfa07d byr:1929",
@@ -35,6 +35,6 @@ iyr:2011 ecl:brn hgt:59in";
             "hcl:#cfa07d eyr:2025 pid:166559648\niyr:2011 ecl:brn hgt:59in"
         ];
 
-        assert_eq!(expected, split_input(input));
+        assert_eq!(expected, split_input(SAMPLE_INPUT));
     }
 }
