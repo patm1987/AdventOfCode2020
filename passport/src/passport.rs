@@ -30,6 +30,7 @@ impl Passport {
                 "byr" => passport.birth_year = Some(value.to_string()),
                 "iyr" => passport.issue_year = Some(value.to_string()),
                 "eyr" => passport.expiration_year = Some(value.to_string()),
+                "hgt" => passport.height = Some(value.to_string()),
                 _ => {}
             }
         });
@@ -59,5 +60,11 @@ mod tests {
     fn validate_expiration_year() {
         let passport = Passport::build(VALID_ENTRY);
         assert_eq!("2020", passport.expiration_year.unwrap());
+    }
+
+    #[test]
+    fn validate_height() {
+        let passport = Passport::build(VALID_ENTRY);
+        assert_eq!("183cm", passport.height.unwrap());
     }
 }
