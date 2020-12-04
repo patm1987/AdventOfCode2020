@@ -71,7 +71,9 @@ impl Passport {
                                 "cm" => {
                                     match captures[1].parse::<i32>() {
                                         Ok(height) => {
-                                            if height >= 150 { passport.height = Some(value.to_string()) }
+                                            if height >= 150 && height <= 193 {
+                                                passport.height = Some(value.to_string())
+                                            }
                                         }
                                         Err(_) => {}
                                     }
@@ -381,7 +383,11 @@ mod tests {
 
     #[test]
     fn require_height_is_at_most_193cm() {
-        todo!()
+        let mut passport_builder = PassportStringBuilder::new();
+        passport_builder.height = "193cm";
+        assert!(Passport::build(&passport_builder.to_string()).is_valid());
+        passport_builder.height = "194cm";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
     }
 
     #[test]
