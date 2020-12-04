@@ -40,6 +40,10 @@ impl Passport {
         });
         passport
     }
+
+    fn valid(&self) -> bool {
+        true
+    }
 }
 
 #[cfg(test)]
@@ -94,5 +98,17 @@ mod tests {
     fn validate_country_id() {
         let passport = Passport::build(VALID_ENTRY);
         assert_eq!("147", passport.country_id.unwrap());
+    }
+
+    #[test]
+    fn requires_birth_year() {
+        let passport = Passport::build("iyr:a eyr:a hgt:a hcl:a ecl:a pid:a cid:a");
+        assert!(!passport.valid())
+    }
+
+    #[test]
+    fn valid_whole_passport() {
+        let passport = Passport::build("byr:a iyr:a eyr:a hgt:a hcl:a ecl:a pid:a cid:a");
+        assert!(passport.valid());
     }
 }
