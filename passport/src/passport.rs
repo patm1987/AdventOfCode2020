@@ -1,4 +1,5 @@
-struct Passport {
+#[derive(Debug)]
+pub struct Passport {
     birth_year: Option<String>,
     issue_year: Option<String>,
     expiration_year: Option<String>,
@@ -10,7 +11,7 @@ struct Passport {
 }
 
 impl Passport {
-    fn build(input: &str) -> Passport {
+    pub fn build(input: &str) -> Passport {
         let mut passport = Passport {
             birth_year: None,
             issue_year: None,
@@ -41,7 +42,7 @@ impl Passport {
         passport
     }
 
-    fn valid(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         return self.birth_year.is_some()
             && self.issue_year.is_some()
             && self.expiration_year.is_some()
@@ -109,54 +110,54 @@ mod tests {
     #[test]
     fn requires_birth_year() {
         let passport = Passport::build("iyr:a eyr:a hgt:a hcl:a ecl:a pid:a cid:a");
-        assert!(!passport.valid())
+        assert!(!passport.is_valid())
     }
 
     #[test]
     fn requires_issue_year() {
         let passport = Passport::build("byr:a eyr:a hgt:a hcl:a ecl:a pid:a cid:a");
-        assert!(!passport.valid());
+        assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_expiration_year() {
         let passport = Passport::build("byr:a iyr:a hgt:a hcl:a ecl:a pid:a cid:a");
-        assert!(!passport.valid());
+        assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_height() {
         let passport = Passport::build("byr:a iyr:a eyr:a hcl:a ecl:a pid:a cid:a");
-        assert!(!passport.valid());
+        assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_hair_color() {
         let passport = Passport::build("byr:a iyr:a eyr:a hgt:a ecl:a pid:a cid:a");
-        assert!(!passport.valid());
+        assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_eye_color() {
         let passport = Passport::build("byr:a iyr:a eyr:a hgt:a hcl:a pid:a cid:a");
-        assert!(!passport.valid());
+        assert!(!passport.is_valid());
     }
 
     #[test]
     fn requires_passport_id() {
         let passport = Passport::build("byr:a iyr:a eyr:a hgt:a hcl:a ecl:a cid:a");
-        assert!(!passport.valid());
+        assert!(!passport.is_valid());
     }
 
     #[test]
     fn doesnt_need_country_id() {
         let passport = Passport::build("byr:a iyr:a eyr:a hgt:a hcl:a ecl:a pid:a");
-        assert!(passport.valid());
+        assert!(passport.is_valid());
     }
 
     #[test]
     fn valid_whole_passport() {
         let passport = Passport::build("byr:a iyr:a eyr:a hgt:a hcl:a ecl:a pid:a cid:a");
-        assert!(passport.valid());
+        assert!(passport.is_valid());
     }
 }

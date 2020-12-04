@@ -1,3 +1,5 @@
+use crate::passport::Passport;
+
 mod passport;
 
 fn main() {
@@ -6,6 +8,12 @@ fn main() {
 
 fn split_input(input: &str) -> Vec<&str> {
     input.split("\n\n").collect()
+}
+
+fn count_valid_passports(input: &str) -> i32 {
+    split_input(input).iter()
+        .map(|record| Passport::build(record))
+        .fold(0, |count, passport| if passport.is_valid() { count + 1 } else { count })
 }
 
 #[cfg(test)]
@@ -36,5 +44,10 @@ iyr:2011 ecl:brn hgt:59in";
         ];
 
         assert_eq!(expected, split_input(SAMPLE_INPUT));
+    }
+
+    #[test]
+    fn matches_sample() {
+        assert_eq!(2, count_valid_passports(SAMPLE_INPUT))
     }
 }
