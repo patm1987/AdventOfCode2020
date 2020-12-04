@@ -1,3 +1,5 @@
+mod passport;
+
 fn main() {
     println!("Hello, world!");
 }
