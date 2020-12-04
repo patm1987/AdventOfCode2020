@@ -41,27 +41,23 @@ impl Passport {
 mod tests {
     use super::*;
 
+    const VALID_ENTRY: &'static str = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm";
+
     #[test]
     fn validate_birth_year() {
-        let input = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm";
-
-        let passport = Passport::build(input);
+        let passport = Passport::build(VALID_ENTRY);
         assert_eq!("1937", passport.birth_year.unwrap());
     }
 
     #[test]
     fn validate_issue_year() {
-        let input = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm";
-
-        let passport = Passport::build(input);
+        let passport = Passport::build(VALID_ENTRY);
         assert_eq!("2017", passport.issue_year.unwrap());
     }
 
     #[test]
     fn validate_expiration_year() {
-        let input = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm";
-
-        let passport = Passport::build(input);
+        let passport = Passport::build(VALID_ENTRY);
         assert_eq!("2020", passport.expiration_year.unwrap());
     }
 }
