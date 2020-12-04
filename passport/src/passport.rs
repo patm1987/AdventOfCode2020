@@ -29,27 +29,23 @@ impl Passport {
             let value = split.next().unwrap();
             match key {
                 "byr" => {
-                    if value.len() == 4 {
-                        match value.to_string().parse::<i32>() {
-                            Ok(date) => {
-                                if date >= 1920 && date <= 2020 {
-                                    passport.birth_year = Some(date)
-                                }
+                    match Passport::string_to_date(value) {
+                        Some(date) => {
+                            if date >= 1920 && date <= 2020 {
+                                passport.birth_year = Some(date)
                             }
-                            Err(_) => {}
                         }
+                        None => {}
                     }
                 }
                 "iyr" => {
-                    if value.len() == 4 {
-                        match value.to_string().parse::<i32>() {
-                            Ok(date) => {
-                                if date >= 2010 && date <= 2020 {
-                                    passport.issue_year = Some(date)
-                                }
+                    match Passport::string_to_date(value) {
+                        Some(date) => {
+                            if date >= 2010 && date <= 2020 {
+                                passport.issue_year = Some(date)
                             }
-                            Err(_) => {}
                         }
+                        None => {}
                     }
                 }
                 "eyr" => passport.expiration_year = Some(value.to_string()),
@@ -62,6 +58,14 @@ impl Passport {
             }
         });
         passport
+    }
+
+    fn string_to_date(input: &str) -> Option<i32> {
+        if input.len() == 4 {
+            input.parse::<i32>().ok()
+        } else {
+            None
+        }
     }
 
     pub fn is_valid(&self) -> bool {
