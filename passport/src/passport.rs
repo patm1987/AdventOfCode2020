@@ -29,6 +29,7 @@ impl Passport {
             match key {
                 "byr" => passport.birth_year = Some(value.to_string()),
                 "iyr" => passport.issue_year = Some(value.to_string()),
+                "eyr" => passport.expiration_year = Some(value.to_string()),
                 _ => {}
             }
         });
@@ -54,5 +55,13 @@ mod tests {
 
         let passport = Passport::build(input);
         assert_eq!("2017", passport.issue_year.unwrap());
+    }
+
+    #[test]
+    fn validate_expiration_year() {
+        let input = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm";
+
+        let passport = Passport::build(input);
+        assert_eq!("2020", passport.expiration_year.unwrap());
     }
 }
