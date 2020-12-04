@@ -61,9 +61,26 @@ impl Passport {
                     }
                 }
                 "hgt" => {
-                    let re = Regex::new(r"^\d+(cm|in)").unwrap();
-                    if re.is_match(value) {
-                        passport.height = Some(value.to_string())
+                    let re = Regex::new(r"^(\d+)(cm|in)").unwrap();
+                    println!("Parsing {}", value);
+                    match re.captures(value) {
+                        Some(captures) => {
+                            println!("Some captures: {:?}", captures);
+                            println!("Match: {:?}", &captures[0]);
+                            match &captures[2] {
+                                "cm" => {
+                                    match captures[1].parse::<i32>() {
+                                        Ok(height) => {
+                                            if height >= 150 { passport.height = Some(value.to_string()) }
+                                        }
+                                        Err(_) => {}
+                                    }
+                                }
+                                "in" => { passport.height = Some(value.to_string()) }
+                                _ => {}
+                            }
+                        }
+                        None => {}
                     }
                 }
                 "hcl" => passport.hair_color = Some(value.to_string()),
@@ -355,21 +372,25 @@ mod tests {
 
     #[test]
     fn require_height_is_at_least_150cm() {
-        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+        let mut passport_builder = PassportStringBuilder::new();
+        passport_builder.height = "149cm";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
+        passport_builder.height = "150cm";
+        assert!(Passport::build(&passport_builder.to_string()).is_valid());
     }
 
     #[test]
     fn require_height_is_at_most_193cm() {
-        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+        todo!()
     }
 
     #[test]
     fn require_height_is_at_least_59in() {
-        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+        todo!()
     }
 
     #[test]
     fn require_height_is_at_most_76in() {
-        let passport1 = Passport::build("hgt:182cm eyr:2030 iyr:2020 byr:1920 hcl:dab227 ecl:brn pid:021572410 cid:277");
+        todo!()
     }
 }
