@@ -1,5 +1,22 @@
+use std::{env, fs};
+
 const ROWS: (i32, i32) = (0, 127);
 const COLS: (i32, i32) = (0, 7);
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify an input");
+        return;
+    }
+
+    let filename: &str = &args[1];
+    println!("Reading {}", filename);
+
+    let input = fs::read_to_string(filename).expect("Failed to read file");
+    let max = input.trim().split('\n').map(|x| Seat::find_seat(x).get_id()).max().unwrap();
+    println!("Max: {}", max);
+}
 
 pub struct Seat {
     row: i32,
@@ -34,10 +51,6 @@ impl Seat {
     pub fn get_row(&self) -> i32 { self.row }
     pub fn get_col(&self) -> i32 { self.col }
     pub fn get_id(&self) -> i32 { self.id }
-}
-
-fn main() {
-    println!("Hello, world!");
 }
 
 fn lower(input: (i32, i32)) -> (i32, i32) {
