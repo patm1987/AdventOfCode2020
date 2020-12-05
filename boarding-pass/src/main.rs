@@ -17,14 +17,22 @@ impl Seat {
                 _ => acc
             }
         });
+        let col = col_search.chars().fold(COLS, |acc, x| {
+            match x {
+                'L' => lower(acc),
+                'R' => upper(acc),
+                _ => acc
+            }
+        });
         Seat {
             row: row.0,
-            col: 0,
+            col: col.0,
             id: 0,
         }
     }
 
     pub fn get_row(&self) -> i32 { self.row }
+    pub fn get_col(&self) -> i32 { self.col }
 }
 
 fn main() {
@@ -73,5 +81,10 @@ mod tests {
     #[test]
     fn test_finds_row() {
         assert_eq!(70, Seat::find_seat("BFFFBBFRRR").get_row())
+    }
+
+    #[test]
+    fn test_finds_col() {
+        assert_eq!(7, Seat::find_seat("BFFFBBFRRR").get_col())
     }
 }
