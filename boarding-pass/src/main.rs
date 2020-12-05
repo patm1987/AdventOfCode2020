@@ -27,12 +27,13 @@ impl Seat {
         Seat {
             row: row.0,
             col: col.0,
-            id: 0,
+            id: row.0 * 8 + col.0,
         }
     }
 
     pub fn get_row(&self) -> i32 { self.row }
     pub fn get_col(&self) -> i32 { self.col }
+    pub fn get_id(&self) -> i32 { self.id }
 }
 
 fn main() {
@@ -86,5 +87,10 @@ mod tests {
     #[test]
     fn test_finds_col() {
         assert_eq!(7, Seat::find_seat("BFFFBBFRRR").get_col())
+    }
+
+    #[test]
+    fn test_finds_id() {
+        assert_eq!(567, Seat::find_seat("BFFFBBFRRR").get_id())
     }
 }
