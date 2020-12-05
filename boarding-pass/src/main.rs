@@ -93,4 +93,19 @@ mod tests {
     fn test_finds_id() {
         assert_eq!(567, Seat::find_seat("BFFFBBFRRR").get_id())
     }
+
+    #[test]
+    fn test_sample_input() {
+        let inputs = [
+            ("BFFFBBFRRR", 70, 7, 567),
+            ("FFFBBBFRRR", 14, 7, 119),
+            ("BBFFBBFRLL", 102, 4, 820)
+        ];
+        inputs.iter().for_each(|(code, row, col, id)| {
+            let seat = Seat::find_seat(code);
+            assert_eq!(seat.get_row(), *row);
+            assert_eq!(seat.get_col(), *col);
+            assert_eq!(seat.get_id(), *id);
+        })
+    }
 }
