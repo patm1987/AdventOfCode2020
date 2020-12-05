@@ -1,6 +1,32 @@
 const ROWS: (i32, i32) = (0, 127);
 const COLS: (i32, i32) = (0, 7);
 
+pub struct Seat {
+    row: i32,
+    col: i32,
+    id: i32,
+}
+
+impl Seat {
+    pub fn find_seat(code: &str) -> Seat {
+        let (row_search, col_search) = code.split_at(7);
+        let row = row_search.chars().fold(ROWS, |acc, x| {
+            match x {
+                'F' => lower(acc),
+                'B' => upper(acc),
+                _ => acc
+            }
+        });
+        Seat {
+            row: row.0,
+            col: 0,
+            id: 0,
+        }
+    }
+
+    pub fn get_row(&self) -> i32 { self.row }
+}
+
 fn main() {
     println!("Hello, world!");
 }
@@ -42,5 +68,10 @@ mod tests {
     #[test]
     fn test_finds_upper_range_in_middle() {
         assert_eq!(upper((32, 47)), (40, 47))
+    }
+
+    #[test]
+    fn test_finds_row() {
+        assert_eq!(70, Seat::find_seat("BFFFBBFRRR").get_row())
     }
 }
