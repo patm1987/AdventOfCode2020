@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::{env, fs, slice};
 
 const ROWS: (i32, i32) = (0, 127);
 const COLS: (i32, i32) = (0, 7);
@@ -14,8 +14,11 @@ fn main() {
     println!("Reading {}", filename);
 
     let input = fs::read_to_string(filename).expect("Failed to read file");
-    let max = input.trim().split('\n').map(|x| Seat::find_seat(x).get_id()).max().unwrap();
-    println!("Max: {}", max);
+    // let max = input.trim().split('\n').map(|x| Seat::find_seat(x).get_id()).max().unwrap();
+    // println!("Max: {}", max);
+    let mut ids: Vec<i32> = input.trim().split('\n').map(|x| Seat::find_seat(x).get_id()).collect();
+    ids.sort();
+    println!("My seat: {}", find_missing(&mut ids.iter()).unwrap());
 }
 
 pub struct Seat {
@@ -59,6 +62,17 @@ fn lower(input: (i32, i32)) -> (i32, i32) {
 
 fn upper(input: (i32, i32)) -> (i32, i32) {
     ((input.0 + input.1) / 2 + 1, input.1)
+}
+
+fn find_missing(values: &mut slice::Iter<'_, i32>) -> Option<i32> {
+    let mut last = values.next().expect("Got an empty array");
+    for index in values {
+        if index - last == 2 {
+            return Some(index - 1)
+        }
+        last = index
+    }
+    None
 }
 
 #[cfg(test)]
@@ -120,5 +134,11 @@ mod tests {
             assert_eq!(seat.get_col(), *col);
             assert_eq!(seat.get_id(), *id);
         })
+    }
+
+    #[test]
+    fn test_finds_missing() {
+        let range = [1,2,4];
+        assert_eq!(Some(3), find_missing(&mut range.iter()))
     }
 }
