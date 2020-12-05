@@ -62,11 +62,8 @@ impl Passport {
                 }
                 "hgt" => {
                     let re = Regex::new(r"^(\d+)(cm|in)").unwrap();
-                    println!("Parsing {}", value);
                     match re.captures(value) {
                         Some(captures) => {
-                            println!("Some captures: {:?}", captures);
-                            println!("Match: {:?}", &captures[0]);
                             match &captures[2] {
                                 "cm" => {
                                     match captures[1].parse::<i32>() {
@@ -78,7 +75,16 @@ impl Passport {
                                         Err(_) => {}
                                     }
                                 }
-                                "in" => { passport.height = Some(value.to_string()) }
+                                "in" => {
+                                    match captures[1].parse::<i32>() {
+                                        Ok(height) => {
+                                            if height >= 59 && height <= 76 {
+                                                passport.height = Some(value.to_string())
+                                            }
+                                        }
+                                        Err(_) => {}
+                                    }
+                                }
                                 _ => {}
                             }
                         }
@@ -392,11 +398,19 @@ mod tests {
 
     #[test]
     fn require_height_is_at_least_59in() {
-        todo!()
+        let mut passport_builder = PassportStringBuilder::new();
+        passport_builder.height = "58in";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
+        passport_builder.height = "59in";
+        assert!(Passport::build(&passport_builder.to_string()).is_valid());
     }
 
     #[test]
     fn require_height_is_at_most_76in() {
-        todo!()
+        let mut passport_builder = PassportStringBuilder::new();
+        passport_builder.height = "76in";
+        assert!(Passport::build(&passport_builder.to_string()).is_valid());
+        passport_builder.height = "77in";
+        assert!(!Passport::build(&passport_builder.to_string()).is_valid());
     }
 }
