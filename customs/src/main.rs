@@ -1,7 +1,16 @@
 use std::collections::{HashSet};
+use std::{env, fs};
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify an input file");
+        return
+    }
+
+    let filename = &args[1];
+    let input = fs::read_to_string(filename).unwrap();
+    println!("Sum of all answers: {}", parse_input(input).iter().sum::<i32>());
 }
 
 fn parse_input(input: String) -> Vec<i32> {
