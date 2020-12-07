@@ -19,7 +19,7 @@ impl Bag {
         }
     }
     fn parse(input: String) -> Result<Bag, &'static str> {
-        let re = Regex::new(r"^(.+) bags{0,1} contain ((\d+) (.+) bags{0,1}, )*((\d+) (.+) bags{0,1})\.$").unwrap();
+        let re = Regex::new(r"^(.+) bags{0,1} contain (?:(\d+) (.+) bags{0,1}, )*(?:(\d+) (.+) bags{0,1})\.$").unwrap();
         match re.captures(&input) {
             Some(captures) => {
                 println!("Captures: {:?}", captures);
@@ -30,14 +30,9 @@ impl Bag {
                     bags: Vec::new(),
                 };
                 loop {
-                    // skip one for the whole group
-                    match iter.next() {
-                        None => { break; }
-                        Some(_) => {}
-                    }
-
                     match iter.next() {
                         Some(count_str) => {
+                            println!("Parsing count: {:?}", count_str);
                             let count: i32 = count_str.unwrap().as_str().parse::<i32>().unwrap();
                             match iter.next() {
                                 Some(name) => {
@@ -59,7 +54,14 @@ impl Bag {
 }
 
 fn parse_bags(input: &str) -> HashMap<String, Bag> {
-    HashMap::new()
+    let mut map = HashMap::new();
+    input.trim().split('\n').for_each(|x| {
+        match Bag::parse(x.to_string()) {
+            Ok(bag) => { map.insert(bag.name.clone(), bag); }
+            Err(_) => {}
+        }
+    });
+    map
 }
 
 #[cfg(test)]
