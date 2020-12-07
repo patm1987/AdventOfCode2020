@@ -1,11 +1,10 @@
-use std::collections::{HashSet};
 use std::{env, fs};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         println!("Please specify an input file");
-        return
+        return;
     }
 
     let filename = &args[1];
@@ -15,13 +14,18 @@ fn main() {
 
 fn parse_input(input: String) -> Vec<i32> {
     input.trim().split("\n\n").map(|x| {
-        let mut map = HashSet::new();
-        x.chars().for_each(|c| {
-            if !c.is_whitespace() {
-                map.insert(c);
-            }
+        let mut histogram: [i32; 26] = [0; 26];
+        let answer_list: Vec<&str> = x.split('\n').collect();
+        answer_list.iter().for_each(|answers| {
+            answers.chars().for_each(|c| {
+                if c as i32 >= 'a' as i32 && c as i32 <= 'z' as i32 {
+                    histogram[(c as i32 - 'a' as i32) as usize] += 1;
+                }
+            });
         });
-        map.len() as i32
+        let mut count = 0;
+        histogram.iter().for_each(|x| if *x == answer_list.len() as i32 { count += 1; });
+        count
     }).collect()
 }
 
@@ -47,13 +51,13 @@ b";
 
     #[test]
     fn test_parses_sample_input() {
-        let expected = vec![3, 3, 3, 1, 1];
+        let expected = vec![3, 0, 1, 1, 1];
         // expected.iter().zip(parse_input(String::from(SAMPLE_INPUT)).for_each(|(lhs, rhs)| assert_eq!(lhs, rhs));
         assert_eq!(expected, parse_input(String::from(SAMPLE_INPUT)));
     }
 
     #[test]
     fn test_can_sum() {
-        assert_eq!(11, parse_input(String::from(SAMPLE_INPUT)).iter().sum())
+        assert_eq!(6, parse_input(String::from(SAMPLE_INPUT)).iter().sum())
     }
 }
