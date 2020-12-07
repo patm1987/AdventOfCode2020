@@ -1,4 +1,5 @@
 use regex::{Regex, Captures, Match};
+use std::collections::HashMap;
 
 fn main() {
     println!("Hello, world!");
@@ -57,6 +58,10 @@ impl Bag {
     }
 }
 
+fn parse_bags(input: &str) -> HashMap<String, Bag> {
+    HashMap::new()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,5 +81,14 @@ dotted black bags contain no other bags.";
         let sample_input = "light red bags contain 1 bright white bag, 2 muted yellow bags.";
         let expected = Bag::new("light red", &[(1, "bright white"), (2, "muted yellow")]);
         assert_eq!(expected, Bag::parse(String::from(sample_input)).unwrap());
+    }
+
+    #[test]
+    fn test_parses_to_hash() {
+        let bag_map = parse_bags(SAMPLE_INPUT);
+        let expected_light_red = Bag::new("light red", &[(1, "bright white"), (2, "muted yellow")]);
+        let expected_dotted_black = Bag::new("dotted black", &[]);
+        assert_eq!(expected_light_red, *bag_map.get("light red").unwrap());
+        assert_eq!(expected_dotted_black, *bag_map.get("dotted black").unwrap());
     }
 }
