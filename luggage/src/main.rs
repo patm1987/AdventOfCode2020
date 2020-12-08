@@ -1,8 +1,17 @@
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
+use std::{env, fs};
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify an input file");
+    }
+
+    let input_file = &args[1];
+    let input = fs::read_to_string(input_file).expect("Failed to read input file");
+    let bag_map = parse_bags(input.as_str());
+    println!("{} bags contain shiny gold", count_contains(&bag_map, "shiny gold"));
 }
 
 #[derive(PartialEq, Debug)]
@@ -43,7 +52,7 @@ fn parse_bags(input: &str) -> HashMap<String, Bag> {
     map
 }
 
-fn can_contain(bag_map: &HashMap<String, Bag>, bag_name: &str) -> i32 {
+fn count_contains(bag_map: &HashMap<String, Bag>, bag_name: &str) -> i32 {
     let mut count = 0;
     bag_map.iter().for_each(|(_name, bag)| {
         let mut pending: Vec<String> = Vec::new();
@@ -104,6 +113,6 @@ dotted black bags contain no other bags.";
     #[test]
     fn test_handles_sample() {
         let bag_map = parse_bags(SAMPLE_INPUT);
-        assert_eq!(4, can_contain(&bag_map, "shiny gold"));
+        assert_eq!(4, count_contains(&bag_map, "shiny gold"));
     }
 }
