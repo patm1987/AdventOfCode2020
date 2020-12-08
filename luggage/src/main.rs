@@ -1,5 +1,5 @@
-use regex::{Regex, Captures, Match};
-use std::collections::HashMap;
+use regex::Regex;
+use std::collections::{HashMap, HashSet};
 
 fn main() {
     println!("Hello, world!");
@@ -43,6 +43,34 @@ fn parse_bags(input: &str) -> HashMap<String, Bag> {
     map
 }
 
+fn can_contain(bag_map: &HashMap<String, Bag>, bag_name: &str) -> i32 {
+    let mut count = 0;
+    bag_map.iter().for_each(|(_name, bag)| {
+        let mut pending: Vec<String> = Vec::new();
+        let mut checked: HashSet<String> = HashSet::new();
+        bag.bags.iter().for_each(|(_count, test_name)| {
+            try_insert(&mut pending, &checked, test_name);
+        });
+        while !pending.is_empty() {
+            let test_bag = pending.pop().unwrap();
+            if test_bag == bag_name {
+                count += 1;
+                return;
+            }
+
+            checked.insert(test_bag.clone());
+            bag_map.get(test_bag.as_str()).unwrap().bags.iter().for_each(|(_count, name)| try_insert(&mut pending, &checked, name));
+        }
+    });
+    count
+}
+
+fn try_insert(pending: &mut Vec<String>, checked: &HashSet<String>, bag_name: &String) {
+    if !pending.contains(bag_name) && !checked.contains(bag_name) {
+        pending.push(bag_name.clone())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -71,5 +99,11 @@ dotted black bags contain no other bags.";
         let expected_dotted_black = Bag::new("dotted black", &[]);
         assert_eq!(expected_light_red, *bag_map.get("light red").unwrap());
         assert_eq!(expected_dotted_black, *bag_map.get("dotted black").unwrap());
+    }
+
+    #[test]
+    fn test_handles_sample() {
+        let bag_map = parse_bags(SAMPLE_INPUT);
+        assert_eq!(4, can_contain(&bag_map, "shiny gold"));
     }
 }
