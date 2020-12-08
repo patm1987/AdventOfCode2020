@@ -19,37 +19,16 @@ impl Bag {
         }
     }
     fn parse(input: String) -> Result<Bag, &'static str> {
-        let re = Regex::new(r"^(.+) bags{0,1} contain (?:(\d+) (.+) bags{0,1}, )*(?:(\d+) (.+) bags{0,1})\.$").unwrap();
-        match re.captures(&input) {
-            Some(captures) => {
-                println!("Captures: {:?}", captures);
-                let mut iter = captures.iter();
-                iter.next(); // skip the full string
-                let mut bag = Bag {
-                    name: iter.next().unwrap().unwrap().as_str().to_string(),
-                    bags: Vec::new(),
-                };
-                loop {
-                    match iter.next() {
-                        Some(count_str) => {
-                            println!("Parsing count: {:?}", count_str);
-                            let count: i32 = count_str.unwrap().as_str().parse::<i32>().unwrap();
-                            match iter.next() {
-                                Some(name) => {
-                                    bag.bags.push((count, name.unwrap().as_str().to_string()));
-                                }
-                                None => { break; }
-                            }
-                        }
-                        None => { break; }
-                    }
-                }
-                Ok(bag)
-            }
-            None => {
-                Err("Failed to parse input")
-            }
-        }
+        let re_descriptor = Regex::new(r"(?P<count>\d+) (?P<name>[a-zA-Z ]+) bags?").unwrap();
+        let mut split = input.split(" bags contain ");
+        let name = split.next().unwrap();
+        let remainder = split.next().unwrap();
+        Ok(Bag {
+            name: name.to_string(),
+            bags: re_descriptor.captures_iter(remainder).filter_map(|x| {
+                Some((x.name("count").unwrap().as_str().parse::<i32>().unwrap(), x.name("name").unwrap().as_str().to_string()))
+            }).collect(),
+        })
     }
 }
 
