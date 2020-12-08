@@ -12,6 +12,7 @@ fn main() {
     let input = fs::read_to_string(input_file).expect("Failed to read input file");
     let bag_map = parse_bags(input.as_str());
     println!("{} bags contain shiny gold", count_contains(&bag_map, "shiny gold"));
+    println!("The shiny gold bag contains {} bags", count_contained_bags(&bag_map, "shiny gold"));
 }
 
 #[derive(PartialEq, Debug)]
@@ -80,6 +81,35 @@ fn try_insert(pending: &mut Vec<String>, checked: &HashSet<String>, bag_name: &S
     }
 }
 
+fn count_contained_bags(bag_map: &HashMap<String, Bag>, bag_name: &str) -> i32 {
+    let mut pending: Vec<String> = Vec::new();
+    let mut count = 0;
+
+    // prime the pending list
+    bag_map.get(bag_name).unwrap().bags.iter().for_each(|(bag_count, name)| {
+        for _i in 0..*bag_count {
+            pending.push(name.clone());
+        }
+    });
+
+    // drain the pending list
+    while !pending.is_empty() {
+        let test_bag = pending.pop().unwrap();
+
+        // there's a bag in there
+        count += 1;
+
+        // add the remaining bags
+        bag_map.get(test_bag.as_str()).unwrap().bags.iter().for_each(|(bag_count, name)| {
+            for _i in 0..*bag_count {
+                pending.push(name.clone());
+            }
+        });
+    }
+
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -93,6 +123,14 @@ dark olive bags contain 3 faded blue bags, 4 dotted black bags.
 vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
 faded blue bags contain no other bags.
 dotted black bags contain no other bags.";
+
+    const SAMPLE_INPUT_2: &str = "shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.";
 
     #[test]
     fn test_parses_bag() {
@@ -114,5 +152,11 @@ dotted black bags contain no other bags.";
     fn test_handles_sample() {
         let bag_map = parse_bags(SAMPLE_INPUT);
         assert_eq!(4, count_contains(&bag_map, "shiny gold"));
+    }
+
+    #[test]
+    fn test_handles_problem_two_input() {
+        let bag_map = parse_bags(SAMPLE_INPUT_2);
+        assert_eq!(126, count_contained_bags(&bag_map, "shiny gold"));
     }
 }
