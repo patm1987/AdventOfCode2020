@@ -26,6 +26,30 @@ fn parse_program(input: &str) -> Vec<Instruction> {
     input.trim().lines().filter_map(|line| parse_line(line).ok()).collect()
 }
 
+fn acc_before_loop(program: &Vec<Instruction>) -> i32 {
+    let mut program_state: Vec<Option<i32>> = vec![None; program.len()];
+    let mut program_counter: i32 = 0;
+    let mut accumulator = 0;
+    while program_state[program_counter as usize] == None {
+        match program[program_counter as usize] {
+            Nop => {
+                program_state[program_counter as usize] = Some(accumulator);
+                program_counter += 1;
+            }
+            Jmp(amount) => {
+                program_state[program_counter as usize] = Some(accumulator);
+                program_counter += amount;
+            }
+            Acc(amount) => {
+                accumulator += amount;
+                program_state[program_counter as usize] = Some(accumulator);
+                program_counter += 1;
+            }
+        }
+    }
+    accumulator
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,5 +100,10 @@ acc +6";
             Acc(6)
         ];
         assert_eq!(expected, parse_program(SAMPLE_INPUT))
+    }
+
+    #[test]
+    fn matches_sample_input() {
+        assert_eq!(5, acc_before_loop(&parse_program(SAMPLE_INPUT)));
     }
 }
