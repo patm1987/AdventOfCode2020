@@ -13,6 +13,7 @@ fn main() {
     let file = fs::read_to_string(filename).expect("Failed to parse file");
     let program = parse_program(&file);
     println!("Found cycle at {:?}", evaluate_program(&program));
+    println!("Fixing it got {:?}", evaluate_program(&fix_program(&program)));
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]
