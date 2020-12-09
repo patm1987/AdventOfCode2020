@@ -22,6 +22,10 @@ fn parse_line(line: &str) -> Result<Instruction, &'static str> {
     }
 }
 
+fn parse_program(input: &str) -> Vec<Instruction> {
+    input.trim().lines().filter_map(|line| parse_line(line).ok()).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -56,5 +60,21 @@ acc +6";
     fn test_parses_acc() {
         assert_eq!(Acc(42), parse_line("acc +42").unwrap());
         assert_eq!(Acc(-1337), parse_line("acc -1337").unwrap());
+    }
+
+    #[test]
+    fn test_parses_sample_input() {
+        let expected = vec![
+            Nop,
+            Acc(1),
+            Jmp(4),
+            Acc(3),
+            Jmp(-3),
+            Acc(-99),
+            Acc(1),
+            Jmp(-4),
+            Acc(6)
+        ];
+        assert_eq!(expected, parse_program(SAMPLE_INPUT))
     }
 }
