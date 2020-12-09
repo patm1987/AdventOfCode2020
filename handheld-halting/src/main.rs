@@ -1,7 +1,17 @@
 use crate::Instruction::{Nop, Jmp, Acc};
+use std::{env, fs};
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify the input file");
+        return;
+    }
+
+    let filename: &str = &args[1];
+    let file = fs::read_to_string(filename).expect("Failed to parse file");
+    let program = parse_program(&file);
+    println!("Found cycle at {:?}", acc_before_loop(&program));
 }
 
 #[derive(PartialEq, Eq, Debug)]
