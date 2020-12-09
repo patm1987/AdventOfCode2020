@@ -6,6 +6,27 @@ fn parse_numbers(input: &str) -> Vec<i32> {
     input.lines().filter_map(|x| x.parse::<i32>().ok()).collect()
 }
 
+fn find_encoding_error(input: &Vec<i32>, window: usize) -> i32 {
+    *input.windows(window + 1).find(|test_window| {
+        let (preamble, test) = test_window.split_at(window);
+        assert_eq!(1, test.len());
+        for i in 0..window - 1 {
+            let i_val = preamble[i];
+            for j in i + 1..window {
+                let j_val = preamble[j];
+                // I don't know if this is valid, instructions unclear
+                if i_val == j_val {
+                    continue;
+                }
+                if i_val + j_val == test[0] {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }).unwrap().last().unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -57,5 +78,10 @@ mod tests {
         ];
 
         assert_eq!(parse_numbers(SAMPLE_INPUT), expected);
+    }
+
+    #[test]
+    fn test_sample() {
+        assert_eq!(127, find_encoding_error(&parse_numbers(SAMPLE_INPUT), 5));
     }
 }
