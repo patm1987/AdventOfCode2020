@@ -12,7 +12,7 @@ fn main() {
     let filename: &str = &args[1];
     let file = fs::read_to_string(filename).expect("Failed to parse file");
     let program = parse_program(&file);
-    println!("Found cycle at {:?}", acc_before_loop(&program));
+    println!("Found cycle at {:?}", evaluate_program(&program));
 }
 
 #[derive(PartialEq, Eq, Debug)]
@@ -44,7 +44,7 @@ fn parse_program(input: &str) -> Vec<Instruction> {
     input.trim().lines().filter_map(|line| parse_line(line).ok()).collect()
 }
 
-fn acc_before_loop(program: &Vec<Instruction>) -> ProgramResult {
+fn evaluate_program(program: &Vec<Instruction>) -> ProgramResult {
     let mut program_state: Vec<Option<i32>> = vec![None; program.len()];
     let mut program_counter: i32 = 0;
     let mut accumulator = 0;
@@ -89,6 +89,26 @@ acc +1
 jmp -4
 acc +6";
 
+    const SAMPLE_INPUT_2: &str = "nop +0
+acc +1
+jmp +4
+acc +3
+jmp -3
+acc -99
+acc +1
+jmp -4
+acc +6";
+
+    const SAMPLE_INPUT_2_FIXED: &str = "nop +0
+acc +1
+jmp +4
+acc +3
+jmp -3
+acc -99
+acc +1
+nop -4
+acc +6";
+
     #[test]
     fn test_parses_noop() {
         assert_eq!(Nop, parse_line("nop +0").unwrap());
@@ -128,6 +148,11 @@ acc +6";
 
     #[test]
     fn matches_sample_input() {
-        assert_eq!(Loop(5), acc_before_loop(&parse_program(SAMPLE_INPUT)));
+        assert_eq!(Loop(5), evaluate_program(&parse_program(SAMPLE_INPUT)));
+    }
+
+    #[test]
+    fn test_detects_ok_result() {
+        assert_eq!(Normal(8), evaluate_program(&parse_program(SAMPLE_INPUT_2_FIXED)));
     }
 }
