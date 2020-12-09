@@ -1,5 +1,6 @@
 use crate::Instruction::{Nop, Jmp, Acc};
 use std::{env, fs};
+use crate::ProgramResult::{Normal, Overflow, Loop};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -21,6 +22,13 @@ enum Instruction {
     Acc(i32),
 }
 
+#[derive(PartialEq, Eq, Debug)]
+enum ProgramResult {
+    Loop(i32),
+    Normal(i32),
+    Overflow(i32),
+}
+
 fn parse_line(line: &str) -> Result<Instruction, &'static str> {
     let instruction = &line[..3];
     let value = &line[4..];
@@ -36,7 +44,7 @@ fn parse_program(input: &str) -> Vec<Instruction> {
     input.trim().lines().filter_map(|line| parse_line(line).ok()).collect()
 }
 
-fn acc_before_loop(program: &Vec<Instruction>) -> i32 {
+fn acc_before_loop(program: &Vec<Instruction>) -> ProgramResult {
     let mut program_state: Vec<Option<i32>> = vec![None; program.len()];
     let mut program_counter: i32 = 0;
     let mut accumulator = 0;
@@ -56,8 +64,14 @@ fn acc_before_loop(program: &Vec<Instruction>) -> i32 {
                 program_counter += 1;
             }
         }
+
+        if program_counter == program.len() as i32 {
+            return Normal(accumulator);
+        } else if program_counter > program.len() as i32 {
+            return Overflow(accumulator);
+        }
     }
-    accumulator
+    Loop(accumulator)
 }
 
 #[cfg(test)]
@@ -114,6 +128,6 @@ acc +6";
 
     #[test]
     fn matches_sample_input() {
-        assert_eq!(5, acc_before_loop(&parse_program(SAMPLE_INPUT)));
+        assert_eq!(Loop(5), acc_before_loop(&parse_program(SAMPLE_INPUT)));
     }
 }
