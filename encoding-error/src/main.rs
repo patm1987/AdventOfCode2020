@@ -1,5 +1,16 @@
+use std::{env, fs};
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify an input file");
+        return;
+    }
+
+    let filename: &str = &args[1];
+    let file = fs::read_to_string(filename).unwrap();
+    let parsed = parse_numbers(&file);
+    println!("Found encoding error at {}", find_encoding_error(&parsed, 25));
 }
 
 fn parse_numbers(input: &str) -> Vec<i32> {
