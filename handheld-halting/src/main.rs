@@ -15,9 +15,9 @@ fn main() {
     println!("Found cycle at {:?}", evaluate_program(&program));
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 enum Instruction {
-    Nop,
+    Nop(i32),
     Jmp(i32),
     Acc(i32),
 }
@@ -31,11 +31,11 @@ enum ProgramResult {
 
 fn parse_line(line: &str) -> Result<Instruction, &'static str> {
     let instruction = &line[..3];
-    let value = &line[4..];
+    let value = &line[4..].parse::<i32>().expect("Failed to parse value");
     match instruction {
-        "nop" => { Ok(Nop) }
-        "jmp" => { Ok(Jmp(value.parse::<i32>().expect("Failed to parse jmp value"))) }
-        "acc" => { Ok(Acc(value.parse::<i32>().expect("Failed to parse acc value"))) }
+        "nop" => { Ok(Nop(*value)) }
+        "jmp" => { Ok(Jmp(*value)) }
+        "acc" => { Ok(Acc(*value)) }
         _ => { Err("unknown instruction") }
     }
 }
@@ -50,7 +50,7 @@ fn evaluate_program(program: &Vec<Instruction>) -> ProgramResult {
     let mut accumulator = 0;
     while program_state[program_counter as usize] == None {
         match program[program_counter as usize] {
-            Nop => {
+            Nop(_) => {
                 program_state[program_counter as usize] = Some(accumulator);
                 program_counter += 1;
             }
@@ -72,6 +72,30 @@ fn evaluate_program(program: &Vec<Instruction>) -> ProgramResult {
         }
     }
     Loop(accumulator)
+}
+
+fn fix_program(program: &Vec<Instruction>) -> Vec<Instruction> {
+    let mut fixed: Vec<Instruction> = program.to_vec();
+    for i in 0..program.len() {
+        match program[i] {
+            Nop(amount) => {
+                fixed[i] = Jmp(amount);
+                match evaluate_program(&fixed) {
+                    Normal(_) => { break; }
+                    _ => { fixed[i] = Nop(amount) }
+                }
+            }
+            Jmp(amount) => {
+                fixed[i] = Nop(amount);
+                match evaluate_program(&fixed) {
+                    Normal(_) => { break; }
+                    _ => { fixed[i] = Jmp(amount) }
+                }
+            }
+            Acc(amount) => {}
+        }
+    }
+    fixed
 }
 
 #[cfg(test)]
@@ -111,7 +135,7 @@ acc +6";
 
     #[test]
     fn test_parses_noop() {
-        assert_eq!(Nop, parse_line("nop +0").unwrap());
+        assert_eq!(Nop(0), parse_line("nop +0").unwrap());
     }
 
     #[test]
@@ -133,7 +157,7 @@ acc +6";
     #[test]
     fn test_parses_sample_input() {
         let expected = vec![
-            Nop,
+            Nop(0),
             Acc(1),
             Jmp(4),
             Acc(3),
@@ -154,5 +178,10 @@ acc +6";
     #[test]
     fn test_detects_ok_result() {
         assert_eq!(Normal(8), evaluate_program(&parse_program(SAMPLE_INPUT_2_FIXED)));
+    }
+
+    #[test]
+    fn test_fixes_sample() {
+        assert_eq!(parse_program(SAMPLE_INPUT_2_FIXED), fix_program(&parse_program(SAMPLE_INPUT_2)));
     }
 }
