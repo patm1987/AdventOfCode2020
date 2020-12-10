@@ -38,11 +38,63 @@ fn find_encoding_error(input: &Vec<i32>, window: usize) -> i32 {
     }).unwrap().last().unwrap()
 }
 
+fn find_contiguous(input: &Vec<i32>, target: i32) -> Vec<i32> {
+    for i in 0..input.len() - 2 {
+        for j in i + 1..input.len() - 1 {
+            let range = &input[i..j + 1];
+            let sum: i32 = range.iter().sum();
+            if sum == target {
+                return range.to_vec();
+            } else if sum > target {
+                break;
+            }
+        }
+    }
+    vec![]
+}
+
+fn find_weakness(input: &Vec<i32>, error: i32) -> i32 {
+    let contiguous = find_contiguous(input, error);
+    let mut min = contiguous[0];
+    let mut max = contiguous[0];
+    for i in 1..contiguous.len() {
+        let test = contiguous[i];
+        if test < min {
+            min = test;
+        }
+        if test > max {
+            max = test;
+        }
+    }
+    min + max
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     const SAMPLE_INPUT: &str = "35
+20
+15
+25
+47
+40
+62
+55
+65
+95
+102
+117
+150
+182
+127
+219
+299
+277
+309
+576";
+
+    const SAMPLE_INPUT_2: &str = "35
 20
 15
 25
@@ -94,5 +146,15 @@ mod tests {
     #[test]
     fn test_sample() {
         assert_eq!(127, find_encoding_error(&parse_numbers(SAMPLE_INPUT), 5));
+    }
+
+    #[test]
+    fn test_find_contiguous() {
+        assert_eq!(vec![15, 25, 47, 40], find_contiguous(&parse_numbers(SAMPLE_INPUT_2), 127));
+    }
+
+    #[test]
+    fn test_sample_2() {
+        assert_eq!(62, find_weakness(&parse_numbers(SAMPLE_INPUT_2), 127));
     }
 }
