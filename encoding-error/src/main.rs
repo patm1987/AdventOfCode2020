@@ -10,7 +10,10 @@ fn main() {
     let filename: &str = &args[1];
     let file = fs::read_to_string(filename).unwrap();
     let parsed = parse_numbers(&file);
-    println!("Found encoding error at {}", find_encoding_error(&parsed, 25));
+    let error = find_encoding_error(&parsed, 25);
+    println!("Found encoding error at {}", error);
+    let weakness = find_weakness(&parsed, error);
+    println!("Weakness: {}", weakness);
 }
 
 fn parse_numbers(input: &str) -> Vec<i32> {
