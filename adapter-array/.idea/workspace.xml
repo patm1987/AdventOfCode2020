@@ -30,7 +30,11 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b10bbbd9-82b0-4aba-b3f0-cc773715c841" name="Default Changelist" comment="" />
+    <list default="true" id="b10bbbd9-82b0-4aba-b3f0-cc773715c841" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -58,7 +62,19 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Cargo.Run">
+    <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="run input.txt" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="test" />
@@ -76,6 +92,10 @@
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Cargo.Test" />
+      <item itemvalue="Cargo.Run" />
+    </list>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -88,8 +108,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1607614736931</updated>
-      <workItem from="1607614738227" duration="523000" />
+      <workItem from="1607614738227" duration="1423000" />
     </task>
+    <task id="LOCAL-00001" summary="Sample works">
+      <created>1607615773397</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1607615773397</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -106,10 +134,50 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Sample works" />
+    <option name="LAST_COMMIT_MESSAGE" value="Sample works" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="223" y="72" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607615265729">
+    <state x="223" y="72" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607616076683">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="223" y="72" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834@0.0.1536.834" timestamp="1607615265729" />
+    <state x="223" y="72" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834@0.0.1536.834" timestamp="1607616076683" />
+    <state width="1493" height="265" key="GridCell.Tab.0.bottom" timestamp="1607616142676">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1607616142676" />
+    <state width="1493" height="265" key="GridCell.Tab.0.center" timestamp="1607616142676">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1607616142676" />
+    <state width="1493" height="265" key="GridCell.Tab.0.left" timestamp="1607616142676">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1607616142676" />
+    <state width="1493" height="265" key="GridCell.Tab.0.right" timestamp="1607616142676">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1607616142676" />
+    <state width="1493" height="265" key="GridCell.Tab.1.bottom" timestamp="1607616142525">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.1.bottom/0.0.1536.834@0.0.1536.834" timestamp="1607616142525" />
+    <state width="1493" height="265" key="GridCell.Tab.1.center" timestamp="1607616142524">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.1.center/0.0.1536.834@0.0.1536.834" timestamp="1607616142524" />
+    <state width="1493" height="265" key="GridCell.Tab.1.left" timestamp="1607616142524">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.1.left/0.0.1536.834@0.0.1536.834" timestamp="1607616142524" />
+    <state width="1493" height="265" key="GridCell.Tab.1.right" timestamp="1607616142524">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="265" key="GridCell.Tab.1.right/0.0.1536.834@0.0.1536.834" timestamp="1607616142524" />
+    <state x="431" y="155" key="search.everywhere.popup" timestamp="1607615431237">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="431" y="155" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1607615431237" />
   </component>
 </project>

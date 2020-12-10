@@ -1,5 +1,17 @@
+use std::{env, fs};
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Please specify program input");
+        return;
+    }
+
+    let filename: &str = &args[1];
+    let input = fs::read_to_string(filename).expect("Failed to parse input");
+    let mut parsed_input = parse_input(&input);
+    let enumerated = enumerate_differences(&mut parsed_input);
+    println!("The delta is {} and {} product {}", enumerated.0, enumerated.1, enumerated.0 * enumerated.1)
 }
 
 fn accumulate_window(mut acc: (i32, i32), window: &[i32]) -> (i32, i32) {
@@ -17,11 +29,11 @@ fn enumerate_differences(input: &mut Vec<i32>) -> (i32, i32) {
     input.sort();
     let mut start = (0, 1); // start with 1 jump from highest to laptop (3)
     start = accumulate_window(start, &[0, input[0]]); // consider the first jump from wall
-    input.windows(2).fold(start, |mut acc, x| accumulate_window(acc, x))
+    input.windows(2).fold(start, |acc, x| accumulate_window(acc, x))
 }
 
 fn parse_input(input: &str) -> Vec<i32> {
-    input.lines().filter_map(|line| line.parse::<i32>().ok()).collect()
+    input.trim().lines().filter_map(|line| line.parse::<i32>().ok()).collect()
 }
 
 #[cfg(test)]
