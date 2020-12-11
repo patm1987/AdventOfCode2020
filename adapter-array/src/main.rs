@@ -26,14 +26,37 @@ fn accumulate_window(mut acc: (i32, i32), window: &[i32]) -> (i32, i32) {
 
 // returns (1 joltage differences, 3 joltage differences)
 fn enumerate_differences(input: &mut Vec<i32>) -> (i32, i32) {
-    input.sort();
     let mut start = (0, 1); // start with 1 jump from highest to laptop (3)
     start = accumulate_window(start, &[0, input[0]]); // consider the first jump from wall
     input.windows(2).fold(start, |acc, x| accumulate_window(acc, x))
 }
 
 fn parse_input(input: &str) -> Vec<i32> {
-    input.trim().lines().filter_map(|line| line.parse::<i32>().ok()).collect()
+    let mut output: Vec<i32> = input.trim().lines().filter_map(|line| line.parse::<i32>().ok()).collect();
+    output.sort();
+    output
+}
+
+fn validate_range<'a, T>(range: T, start: i32, end: i32) -> bool
+    where
+        T: IntoIterator<Item=&'a i32>, {
+    let acc = range.into_iter().try_fold(start, |acc, &x| {
+        if x - acc > 3 {
+            None
+        } else {
+            Some(x)
+        }
+    });
+    match acc {
+        Some(x) => {
+            if end - x > 3 {
+                false
+            } else {
+                true
+            }
+        }
+        None => { false }
+    }
 }
 
 #[cfg(test)]
@@ -75,5 +98,25 @@ mod tests {
     #[test]
     fn test_passes_sample() {
         assert_eq!((22, 10), enumerate_differences(&mut parse_input(SAMPLE_INPUT)))
+    }
+
+    #[test]
+    fn validates_good_array() {
+        assert!(validate_range(&[1, 2, 3], 0, 4));
+    }
+
+    #[test]
+    fn doesnt_validate_bad_array() {
+        assert!(!validate_range(&[1, 6], 0, 7));
+    }
+
+    #[test]
+    fn checks_start_for_validation() {
+        assert!(!validate_range(&[4, 5, 6], 0, 7));
+    }
+
+    #[test]
+    fn checks_end_for_validation() {
+        assert!(!validate_range(&[1, 2, 3], 0, 7))
     }
 }
